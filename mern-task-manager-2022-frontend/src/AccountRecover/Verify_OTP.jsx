@@ -1,22 +1,29 @@
 import React, { Fragment } from 'react'
-import PinCode from '@uiw/react-pin-code';
+import ReactCodeInput from 'react-code-input-2'
 import { useState } from 'react';
 import { ErrorToast } from '../helper/FormHelper';
 import { RecoverVerifyOTPRequest } from '../APIRequest/APIRequest';
+import { getEmail } from '../helper/SessionHelper';
+import {useNavigate} from "react-router-dom";
 
 const Verify_OTP = () => {
 
-    const [OTP,setOTP]=useState("")
+    let navigate=useNavigate();
+    let [OTP,SetOTP]=useState("")
 
-    const submitOTP=()=>{
+    const SubmitOTP = () => {
         if(OTP.length===6){
-            RecoverVerifyOTPRequest().then((res)=>{
-                
+            RecoverVerifyOTPRequest(getEmail(),OTP).then((result)=>{
+                if(result===true){
+                    navigate("/CreatePassword");
+                }
             })
-        }else{
-            ErrorToast('OTP Must 6 Digit');
         }
-    }
+        else {
+            ErrorToast("Enter 6 Digit Code")
+        }
+      }
+
   return (
     <Fragment>
         <div className="container">
@@ -27,9 +34,10 @@ const Verify_OTP = () => {
                             <h4>OTP VERIFICATION </h4>
                             <p>A 6 Digit verification code has been sent to your email address. </p>
                             {/* <PinCode  fields={6}/> */}
-                            <PinCode onChange={(value)=>setOTP(value)} autoFocus value={['', '', '', '', '', '']} />
+                            <ReactCodeInput type='number' onChange={(value)=>SetOTP(value)} fields={6} />
+                            {/* <PinCode onChange={(value)=>SetOTP(value)} autoFocus value={['', '', '', '', '', '']}/> */}
                             <br/>  <br/>
-                            <button onClick={submitOTP} className="btn w-100 animated fadeInUp float-end btn-primary">Next</button>
+                            <button onClick={SubmitOTP} className="btn w-100 animated fadeInUp float-end btn-primary">Next</button>
                         </div>
                     </div>
                 </div>

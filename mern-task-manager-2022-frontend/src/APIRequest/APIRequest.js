@@ -2,14 +2,14 @@ import axios from "axios";
 import { ErrorToast, SuccessToast } from "../helper/FormHelper";
 import { HideLoader, ShowLoader } from "../redux/state-slice/SettingSlice";
 import Store from "../redux/store/Store";
-import {getToken, setEmail, setToken, setUserDetails} from "../helper/SessionHelper";
+import {getToken, setEmail, setOTP, setToken, setUserDetails} from "../helper/SessionHelper";
 import { SetCanceledTask, SetCompletedTask, SetNewTask, SetProgressTask } from "../redux/state-slice/TaskSlice";
 import { SetSummary } from "../redux/state-slice/SummarySlice";
 import { SetProfile } from "../redux/state-slice/ProfileSlice";
 
 const AxiosHeader={headers:{"token":getToken()}}
 
-const BaseUrl="https://mern-task-manager-2022.herokuapp.com/api/v1"
+const BaseUrl="https://mern-task-manager-apk-v1.herokuapp.com/api/v1"
 
 export function RegistrationRequest(email,firstName,lastName,mobile,password,photo){
 
@@ -278,20 +278,28 @@ export function RecoverVerifyEmailRequest(email){
 export function RecoverVerifyOTPRequest(email,OTP){
     Store.dispatch(ShowLoader())
     let URL=BaseUrl+"/RecoverVerifyOTP/"+email+"/"+OTP;
-
     return axios.get(URL).then((res)=>{
         Store.dispatch(HideLoader())
         if(res.status===200){
-            return true;
+            if(res.data['status']==="fail"){
+                ErrorToast(res.data['data']);
+                return false;
+            }
+            else{
+                setOTP(OTP)
+                SuccessToast("Code Verification Success");
+                return true;
+            }
         }
         else{
             ErrorToast("Something Went Wrong")
+            return false;
         }
     }).catch((err)=>{
         ErrorToast("Something Went Wrong")
         Store.dispatch(HideLoader())
+        return false;
     });
-
 }
 
 export function RecoverResetPassRequest(email,OTP,password){
