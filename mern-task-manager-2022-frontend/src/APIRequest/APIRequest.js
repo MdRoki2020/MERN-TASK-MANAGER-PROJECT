@@ -311,10 +311,18 @@ export function RecoverResetPassRequest(email,OTP,password){
     return axios.post(URL,postBody).then((res)=>{
         Store.dispatch(HideLoader())
         if(res.status===200){
-            return true;
+            if(res.data['status']==='fail'){
+                ErrorToast(res.data['data'])
+                return false;
+            }else{
+                setOTP(OTP)
+                SuccessToast("New Password Created");
+                return true;
+            }
         }
         else{
             ErrorToast("Something Went Wrong")
+            return false
         }
     }).catch((err)=>{
         ErrorToast("Something Went Wrong")

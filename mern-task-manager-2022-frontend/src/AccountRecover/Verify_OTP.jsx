@@ -33,9 +33,7 @@ const Verify_OTP = () => {
                         <div className="card-body">
                             <h4>OTP VERIFICATION </h4>
                             <p>A 6 Digit verification code has been sent to your email address. </p>
-                            {/* <PinCode  fields={6}/> */}
                             <ReactCodeInput type='number' onChange={(value)=>SetOTP(value)} fields={6} />
-                            {/* <PinCode onChange={(value)=>SetOTP(value)} autoFocus value={['', '', '', '', '', '']}/> */}
                             <br/>  <br/>
                             <button onClick={SubmitOTP} className="btn w-100 animated fadeInUp float-end btn-primary">Next</button>
                         </div>

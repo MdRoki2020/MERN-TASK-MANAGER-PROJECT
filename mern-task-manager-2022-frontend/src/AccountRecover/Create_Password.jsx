@@ -2,8 +2,12 @@ import React, { Fragment } from 'react'
 import { useRef } from 'react'
 import { RecoverResetPassRequest } from '../APIRequest/APIRequest';
 import { ErrorToast, IsEmpty } from '../helper/FormHelper';
+import {getEmail, getOTP} from '../helper/SessionHelper'
+import {useNavigate} from "react-router-dom";
 
 const Create_Password = () => {
+
+    let navigate=useNavigate();
 
     let passwordRef,confirmPasswordRef=useRef();
 
@@ -20,8 +24,10 @@ const Create_Password = () => {
         else if(password!==confirmPassword){
             ErrorToast("Password Dosen't Match");
         }else{
-            RecoverResetPassRequest().then((res)=>{
-                
+            RecoverResetPassRequest(getEmail(),getOTP(),password).then((result)=>{
+                if(result===true){
+                    navigate("/Login");
+                }
             })
         }
     }
@@ -35,7 +41,7 @@ const Create_Password = () => {
                             <h4>SET NEW PASSWORD</h4>
                             <br/>
                             <label>Your email address</label>
-                            <input readOnly={true}  placeholder="User Email" className="form-control animated fadeInUp" type="email"/>
+                            <input value={getEmail()} readOnly={true}  placeholder="User Email" className="form-control animated fadeInUp" type="email"/>
                             <br/>
                             <label>New Password</label>
                             <input ref={(input)=>passwordRef=input} placeholder="New Password" className="form-control animated fadeInUp" type="password"/>
